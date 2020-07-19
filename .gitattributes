@@ -1,2 +1,2 @@
 * linguist-vendored
-*.css linguist-detectable=False
+*.py linguist-detectable=True
