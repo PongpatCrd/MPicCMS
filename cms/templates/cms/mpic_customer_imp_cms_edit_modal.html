@@ -1,0 +1,202 @@
+<div class="modal fade" id="mpic_customer_imp_cms_edit_modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 id="mpic_customer_imp_cms_edit_modal_head" class="modal-title">EDIT</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <div id="mpic_customer_imp_cms_edit_form_container" class="container">
+          <div style="width: fit-content; margin: 0 auto;">
+            <form id="mpic_customer_imp_cms_edit_form">
+              {% csrf_token %}
+              <div class="row">
+                <div class="col">
+                  <span>Code&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  <input class="mpic_customer_imp_cms_edit_input" id="custcode" name="custcode" autocomplete="off">
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col">
+                  <span>Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  <input class="mpic_customer_imp_cms_edit_input" id="custname" name="custname" autocomplete="off">
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col">
+                  <span>Address</span>
+                  <textarea class="mpic_customer_imp_cms_edit_input" id="custaddress" name="custaddress"
+                    oninput="show_all_textarea(this);"></textarea>
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col">
+                  <span>Customer Group&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  <input class="mpic_customer_imp_cms_edit_input" id="custgroup" name="custgroup" autocomplete="off">
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col">
+                  <span>Post
+                    Profile&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  <input class="mpic_customer_imp_cms_edit_input" id="postprofile" name="postprofile" autocomplete="off">
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col">
+                  <span>Site&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  <input class="mpic_customer_imp_cms_edit_input" id="site" name="site" autocomplete="off">
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col">
+                  <span>Warehouse&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  <input class="mpic_customer_imp_cms_edit_input" id="warehouse" name="warehouse" autocomplete="off">
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col">
+                  <span>Business ax&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  <input class="mpic_customer_imp_cms_edit_input" id="buax" name="buax" autocomplete="off">
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col">
+                  <span>Division
+                    ax&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  <input class="mpic_customer_imp_cms_edit_input" id="divax" name="divax" autocomplete="off">
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col">
+                  <span>Location ax&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  <input class="mpic_customer_imp_cms_edit_input" id="locax" name="locax" autocomplete="off">
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col">
+                  <span>Intercocd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  <input class="mpic_customer_imp_cms_edit_input" id="intercocd" name="intercocd" autocomplete="off">
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col">
+                  <span>Company Code &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  <input class="mpic_customer_imp_cms_edit_input" id="custmapping" name="custmapping"
+                    autocomplete="off">
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col">
+                  <span>Updated Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  <input id="amend_date" name="amend_date"
+                    style="background-color: silver;" value="" readonly>
+                </div>
+                <script>
+                  $(".mpic_customer_imp_cms_edit_input").on('change', function () {
+                    $("#amend_date").val(get_timestamp());
+                  });
+                </script>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col">
+                  <span>Updated By &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  <input class="mpic_customer_imp_cms_edit_input" id="amend_by" name="amend_by"
+                    style="background-color: silver;" value="" readonly>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </div>
+      <div id="mpic_customer_imp_cms_edit_form_footer" class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button id="mpic_customer_imp_cms_edit_form_submit_btn" type="button" class="btn btn-primary">Save
+          changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function prepare_edit_customer_modal_can_edit() {
+    $(".mpic_customer_imp_cms_edit_input").prop("disabled", false);
+
+    $("#mpic_customer_imp_cms_edit_form_submit_btn").attr('hidden', false);
+
+    // set updated By using login username
+    let name = "{{user.get_username}}";
+    $("#amend_by").val(name);
+  }
+
+  function prepare_edit_customer_modal_only_readable() {
+    $(".mpic_customer_imp_cms_edit_input").prop("disabled", true);
+    $("#mpic_customer_imp_cms_edit_form_submit_btn").attr('hidden', true);
+  }
+
+  function copy_data_to_current_loop_number_mpic_customer_imp_cms(){
+    $("#custcode"+current_loop_number).text($("#custcode").val()).change();
+    $("#custname"+current_loop_number).text($("#custname").val()).change();
+    $("#custaddress"+current_loop_number).text($("#custaddress").val()).change();
+    $("#custgroup"+current_loop_number).text($("#custgroup").val()).change();
+    $("#postprofile"+current_loop_number).text($("#postprofile").val()).change();
+    $("#site"+current_loop_number).text($("#site").val()).change();
+    $("#warehouse"+current_loop_number).text($("#warehouse").val()).change();
+    $("#buax"+current_loop_number).text($("#buax").val()).change();
+    $("#divax"+current_loop_number).text($("#divax").val()).change();
+    $("#locax"+current_loop_number).text($("#locax").val()).change();
+    $("#intercocd"+current_loop_number).text($("#intercocd").val()).change();
+    $("#custmapping"+current_loop_number).text($("#custmapping").val()).change();
+    $("#amend_date"+current_loop_number).text($("#amend_date").val()).change();
+    $("#amend_by"+current_loop_number).text($("#amend_by").val()).change();
+  }
+
+  $("#mpic_customer_imp_cms_edit_form_submit_btn").on('click', function () {
+    $("#mpic_customer_imp_cms_edit_form").submit();
+  });
+
+  $("#mpic_customer_imp_cms_edit_form").submit(function (e) {
+    e.preventDefault();
+    $("#mpic_customer_imp_cms_edit_modal").modal('hide');
+    loading_screen(true);
+
+    $.ajax({
+      type: 'POST',
+      url: '{% url "mpic_customer_imp_cms_edit_data" %}',
+      dataType: 'json',
+      data: $(this).serialize(),
+      success: function (response) {
+        if (response.msg == 'success') {
+          copy_data_to_current_loop_number_mpic_customer_imp_cms();
+          set_tbl_id_using_current_loop_number(response.tbl_id);
+        }
+        else {
+          set_alert_status_msg(response.msg);
+          $("#alert_modal").modal('show');
+        }
+        loading_screen(false);
+      },
+      error: function (response) {
+        $("body").html("<h1>Oops! Something went wrong. Please try again later.</h1>");
+        loading_screen(false);
+      }
+    });
+  });
+</script>

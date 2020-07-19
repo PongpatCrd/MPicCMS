@@ -1,0 +1,51 @@
+<div class="modal fade" id="confirm_modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">CONFIRM TAKE ACTION</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="text-align: center;">
+        <b>Confirm to take this action?</b>
+        <br>
+        <br>
+        <span>Please Type: <span id="confirm_word_check" style="color: red;"></span></span>
+        <br>
+        <input id="confirm_word_check_input">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"><b>Close</b></button>
+        <button id="confirm_btn" type="button" class="btn btn-danger"><b>Confirm?</b></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function plug_element_onclick(access_to){
+    $("#confirm_modal").modal('show');
+    $('#confirm_btn').click(function(){ 
+      $(access_to).click(); 
+      $("#confirm_modal").modal('hide');
+    });
+  }
+
+  $("#confirm_modal").on('shown.bs.modal', function(){
+    $("#confirm_btn").attr('disabled', true);
+    
+    let rd_text = random_text(7);
+    $("#confirm_word_check").text(rd_text);
+    $("#confirm_word_check_input").val("");
+  });
+
+  $("#confirm_word_check_input").on('input', function(){
+    if($(this).val() == $("#confirm_word_check").text()){
+      $("#confirm_btn").attr('disabled', false);
+    }
+    else{
+      $("#confirm_btn").attr('disabled', true);
+    }
+  });
+</script>

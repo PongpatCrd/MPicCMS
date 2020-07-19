@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <style>
+    #main {
+      transition: margin-left .5s;
+    }
+
+    #navbar_btn {
+      transition: 0.5s;
+    }
+
+    div.cn_outer {
+      position: absolute;
+      z-index: 10;
+    }
+
+    div.cn_inner {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+    }
+  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+</head>
+<body>
+  {% include 'base.html' %}
+  {% include 'navbar.html' %}
+  <div id="navbar_btn" class="cn_outer" style="height: 100vh; width: 10px; cursor: pointer; background-color: slategrey;" onclick="sidebar_controller($('#nav_icon'));">
+    <div class="cn_inner">
+      <i id="nav_icon" class="fas fa-chevron-right" style="color: white;"></i>
+    </div>
+  </div>
+
+  <div id="main" style="margin-left:10px;">
+    <div class="container-fulid">
+      <div class="row">
+        <div class="col" style="background-color: #336699;">
+          <h3 id="datetime_header" style="color: blanchedalmond;"></h3>
+          <script>
+            setInterval(function(){
+              $("#datetime_header").text(get_datetime());
+            }, 500);
+          </script>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          {% block content %}
+          {% endblock content %}
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

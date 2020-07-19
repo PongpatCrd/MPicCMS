@@ -1,0 +1,214 @@
+{% extends 'main_layout.html' %}
+{% load custom_tags %}
+{% block content %}
+<div class="container-fulid" style="margin-top: 17px;">
+  <div class="row" style="margin-bottom: 10px;">
+    <div class="col">
+      <form id="search_form" method="GET" action="{% url 'movie_cms' %}">
+        Search: <input name="search_key" type="text" autocomplete="off" value="{{ search_key }}">
+        <button type="submit" class="btn btn-primary btn-sm" style="margin-bottom: 3px;" id="search_btn"><i class="fas fa-search"></i></button>
+      </form>
+    </div>
+    <div class="col">
+      <button class="btn btn-success btn-sm" style="float: right;"
+        onclick="add_new_empty_row_to_movie_table(createUUID());"><b><i class="fas fa-plus-circle"></i> Create
+          New</b></button>
+      <button class="btn btn-warning btn-sm" style="float: right; margin-right: 15px;" onclick='$("#import_modal").modal("show");'><i class="fas fa-file-import"></i> <b>Import Excel File</b></button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="table-responsive">
+        <table id="mpic_movie_imp_cms_table" class="table table-sm table-hover" style="font-size: 11px;">
+          <thead class="thead-dark">
+            <tr style="text-align: center;">
+              <th scope="col">#</th>
+              <th scope="col">Code</th>
+              <th scope="col">Title</th>
+              <th scope="col">Name</th>
+              <th scope="col">Unit Price</th>
+              <th scope="col">Discount%</th>
+              <th scope="col">Mapping to</th>
+              <th scope="col">Release Date</th>
+              <th scope="col">Finish Date</th>
+              <th scope="col">Updated Date</th>
+              <th scope="col">Updated By</th>
+              <th scope="col">Edit</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for tbl_mpic_movie_imp_ax in tbl_mpic_movie_imp_axs %}
+            <tr>
+              <td style="text-align: center;">{{ forloop.counter0|add:tbl_mpic_movie_imp_axs.start_index }}</td>
+              <td style="text-align: center;">
+                <span id="mvcode{{forloop.counter}}">{{tbl_mpic_movie_imp_ax.mvcode}}</span>
+              </td>
+              <td style="text-align: center;">
+                <span id="mvtitle{{forloop.counter}}">{{tbl_mpic_movie_imp_ax.mvtitle}}</span>
+              </td>
+              <td>
+                <span id="mvname{{forloop.counter}}">{{tbl_mpic_movie_imp_ax.mvname}}</span>
+              </td>
+              <td style="text-align: center;">
+                <span id="unit_price{{forloop.counter}}">{{tbl_mpic_movie_imp_ax.unit_price}}</span>
+              </td>
+              <td style="text-align: center;">
+                <span id="perc_disc{{forloop.counter}}">{{tbl_mpic_movie_imp_ax.perc_disc}}</span>
+              </td>
+              <td style="text-align: center;">
+                <span id="mvmapping{{forloop.counter}}">{{tbl_mpic_movie_imp_ax.mvmapping}}</span>
+              </td>
+              <td style="text-align: center;">
+                <span id="releasedate{{forloop.counter}}">{{tbl_mpic_movie_imp_ax.releasedate}}</span>
+              </td>
+              <td style="text-align: center;">
+                <span id="finishdate{{forloop.counter}}">{{tbl_mpic_movie_imp_ax.finishdate}}</span>
+              </td>
+              <td style="text-align: center;">
+                <span id="amend_date{{forloop.counter}}">{{tbl_mpic_movie_imp_ax.amend_date}}</span>
+              </td>
+              <td style="text-align: center;">
+                <span id="amend_by{{forloop.counter}}">{{tbl_mpic_movie_imp_ax.amend_by}}</span>
+              </td>
+              <td style="text-align: center;">
+                <i class="fas fa-edit" style="cursor: pointer;"
+                  onclick="copy_data_to_edit_movie_modal_by_row_number('{{forloop.counter}}', 'EDIT'); $('#mpic_movie_imp_cms_edit_modal').modal('show');"></i>
+              </td>
+              <td>
+                <i class="fas fa-minus-circle" style="cursor: pointer; color: red;"
+                  onclick="plug_element_onclick('#delete{{forloop.counter}}');"></i>
+                <span id="tbl_id_container{{forloop.counter}}" hidden>{{tbl_mpic_movie_imp_ax.tbl_id}}</span>
+                <button type="button" id="delete{{forloop.counter}}"
+                  onclick="delete_mpic_movie_item('#tbl_id_container{{forloop.counter}}'); $(this).parent().parent().remove();"
+                  hidden></button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if tbl_mpic_movie_imp_axs.has_other_pages %}
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <div class="pagination" style="width: fit-content; margin: 0 auto;">
+        {% if tbl_mpic_movie_imp_axs.has_previous %}
+        <a href="?{% update_url_params page=1 %}">&laquo;</a>
+        {% endif %}
+        {% for i in tbl_mpic_movie_imp_axs.paginator.page_range %}
+        {% if i >= tbl_mpic_movie_imp_axs.number|add:'-5' and i <= tbl_mpic_movie_imp_axs.number|add:'5' %}
+        {% if tbl_mpic_movie_imp_axs.number == i %}
+        <a class="active" href="?{% update_url_params page=i %}">{{ i }}</a>
+        {% else %}
+        <a href="?{% update_url_params page=i %}">{{ i }}</a>
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+        {% if tbl_mpic_movie_imp_axs.has_next %}
+        <a href="?{% update_url_params page=tbl_mpic_movie_imp_axs.paginator.num_pages %}">&raquo;</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<script>
+  var current_loop_number = 0;
+  function copy_data_to_edit_movie_modal_by_row_number(loop_number, head_word) {
+    $("#mpic_movie_imp_cms_edit_modal_head").html(head_word);
+    current_loop_number = loop_number;
+    $("#mvcode").val($("#mvcode" + loop_number).text());
+    $("#mvtitle").val($("#mvtitle" + loop_number).text());
+    $("#mvname").val($("#mvname" + loop_number).text());
+    $("#unit_price").val($("#unit_price" + loop_number).text());
+    $("#perc_disc").val($("#perc_disc" + loop_number).text());
+    $("#mvmapping").val($("#mvmapping" + loop_number).text());
+    $("#releasedate").val($("#releasedate" + loop_number).text());
+    $("#finishdate").val($("#finishdate" + loop_number).text());
+    $("#amend_date").val($("#amend_date" + loop_number).text());
+  }
+
+  function add_new_empty_row_to_movie_table_without_start_modal(uuid){
+    text = '\
+    <tr>\
+      <td style="text-align: center; color: yellowgreen;">\
+        new record\
+      </td>\
+      <td style="text-align: center;"><span id="mvcode{0}"></span></td>\
+      <td style="text-align: center;"><span id="mvtitle{0}"></span></td>\
+      <td><span id="mvname{0}"></span></td>\
+      <td style="text-align: center;"><span id="unit_price{0}"></span></td>\
+      <td style="text-align: center;"><span id="perc_disc{0}"></span></td>\
+      <td style="text-align: center;"><span id="mvmapping{0}"></span></td>\
+      <td style="text-align: center;"><span id="releasedate{0}"></span></td>\
+      <td style="text-align: center;"><span id="finishdate{0}"></span></td>\
+      <td style="text-align: center;"><span id="amend_date{0}"></span></td>\
+      <td style="text-align: center;"><span id="amend_by{0}"></span></td>\
+      <td style="text-align: center;">\
+        <i class="fas fa-edit" style="cursor: pointer;" onclick="{1} {2}"></i>\
+      </td>\
+      <td>\
+        <i class="fas fa-minus-circle" style="cursor: pointer; color: red;" onclick="{3}"></i>\
+        <span id="tbl_id_container{0}" hidden>{0}</span>\
+        <button type="button" id="delete{0}" onclick="{4} $(this).parent().parent().remove();" hidden></button>\
+      </td>\
+    </tr>\
+    '.f(
+      uuid,
+      "copy_data_to_edit_movie_modal_by_row_number('{0}', 'CREATE NEW');",
+      "$('#mpic_movie_imp_cms_edit_modal').modal('show');",
+      "plug_element_onclick('#delete{0}');",
+      "delete_mpic_movie_item('#tbl_id_container{0}');"
+    );
+
+    $("#mpic_movie_imp_cms_table").prepend(text);
+  }
+
+  function add_new_empty_row_to_movie_table(uuid) {
+    add_new_empty_row_to_movie_table_without_start_modal(uuid);
+
+    copy_data_to_edit_movie_modal_by_row_number(uuid, 'CREATE NEW');
+    $('#mpic_movie_imp_cms_edit_modal').modal('show');
+  }
+
+  function set_tbl_id_using_current_loop_number(tbl_id) {
+    $("#tbl_id_container" + current_loop_number).text(tbl_id);
+  }
+
+  function delete_mpic_movie_item(tbl_id_container_element_id) {
+    loading_screen(true);
+    $.ajax({
+      type: 'POST',
+      url: '{% url "mpic_movie_imp_cms_delete" %}',
+      dataType: 'json',
+      data: {
+        'tbl_id': $(tbl_id_container_element_id).text(),
+        'csrfmiddlewaretoken': "{{ csrf_token }}"
+      },
+      success: function (response) {
+        if (response.msg != 'success') {
+          set_alert_status_msg(response.msg);
+          $("#alert_modal").modal('show');
+        }
+        loading_screen(false);
+      },
+      error: function () {
+        $("body").html("<h1>Oops! Something went wrong. Please try again later.</h1>");
+        loading_screen(false);
+      }
+    });
+  }
+
+  
+</script>
+
+{% include 'cms/mpic_movie_imp_cms_edit_modal.html' %}
+{% include 'cms/mpic_movie_imp_cms_import_excel_modal.html' %}
+{% endblock content %}

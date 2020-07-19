@@ -1,0 +1,262 @@
+{% extends 'main_layout.html' %}
+{% load custom_tags %}
+{% block content %}
+<div class="container-fulid" style="margin-top: 17px;">
+  <div class="row" style="margin-bottom: 10px;">
+    <div class="col">
+      <form id="search_form" method="GET" action="{% url 'customer_cms' %}">
+        Search: <input name="search_key" type="text" autocomplete="off" value="{{ search_key }}">
+        <button type="submit" class="btn btn-primary btn-sm" style="margin-bottom: 3px;" id="search_btn"><i class="fas fa-search"></i></button>
+      </form>
+    </div>
+    <div class="col">
+      <button class="btn btn-success btn-sm" style="float: right;"
+        onclick="add_new_empty_row_to_customer_table(createUUID());"><b><i class="fas fa-plus-circle"></i> Create
+          New</b></button>
+      <button class="btn btn-warning btn-sm" style="float: right; margin-right: 15px;"
+        onclick='$("#import_modal").modal("show");'><i class="fas fa-file-import"></i> <b>Import Excel File</b></button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="table-responsive">
+        <table id="mpic_customer_imp_cms_table" class="table table-sm table-hover" style="font-size: 11px;">
+          <thead class="thead-dark">
+            <tr style="text-align: center;">
+              <th scope="col">#</th>
+              <th scope="col">Code</th>
+              <th scope="col">Name</th>
+              <th scope="col">Address</th>
+              <th scope="col">Customer Group</th>
+              <th scope="col">Post Profile</th>
+              <th scope="col">Site</th>
+              <th scope="col">Warehouse</th>
+              <th scope="col">Bussiness Ax</th>
+              <th scope="col">Division Ax</th>
+              <th scope="col">Location Ax</th>
+              <th scope="col">Intercocd</th>
+              <th scope="col">Company Code</th>
+              <th scope="col">Updated Date</th>
+              <th scope="col">Updated By</th>
+              <th scope="col">Edit</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for tbl_mpic_customer_imp_ax in tbl_mpic_customer_imp_axs %}
+            <tr>
+              <td style="text-align: center;">{{ forloop.counter0|add:tbl_mpic_customer_imp_axs.start_index }}</td>
+              <td style="text-align: center;">
+                <span id="custcode{{forloop.counter}}">{{ tbl_mpic_customer_imp_ax.custcode }}</span>
+              </td>
+              <td>
+                <span id="custname{{forloop.counter}}">{{ tbl_mpic_customer_imp_ax.custname }}</span>
+              </td>
+              <td>
+                <span id="custaddress{{forloop.counter}}">{{ tbl_mpic_customer_imp_ax.custaddress }}</span>
+              <td style="text-align: center;">
+                <span id="custgroup{{forloop.counter}}">{{ tbl_mpic_customer_imp_ax.custgroup }}</span>
+              </td>
+              <td style="text-align: center;">
+                <span id="postprofile{{forloop.counter}}">{{ tbl_mpic_customer_imp_ax.postprofile }}</span>
+              </td>
+              <td style="text-align: center;">
+                <span id="site{{forloop.counter}}">{{ tbl_mpic_customer_imp_ax.site }}</span>
+              </td>
+              <td style="text-align: center;">
+                <span id="warehouse{{forloop.counter}}">{{ tbl_mpic_customer_imp_ax.warehouse }}</span>
+              </td>
+              <td style="text-align: center;">
+                <span id="buax{{forloop.counter}}">{{ tbl_mpic_customer_imp_ax.buax }}</span>
+              </td>
+              <td style="text-align: center;">
+                <span id="divax{{forloop.counter}}">{{ tbl_mpic_customer_imp_ax.divax }}</span>
+              </td>
+              <td style="text-align: center;">
+                <span id="locax{{forloop.counter}}">{{ tbl_mpic_customer_imp_ax.locax }}</span>
+              </td>
+              <td style="text-align: center;">
+                <span id="intercocd{{forloop.counter}}">{{ tbl_mpic_customer_imp_ax.intercocd }}</span>
+              </td>
+              <td style="text-align: center;">
+                <span id="custmapping{{forloop.counter}}">{{ tbl_mpic_customer_imp_ax.custmapping }}</span>
+              </td>
+              <td style="text-align: center;">
+                <span id="amend_date{{forloop.counter}}">{{ tbl_mpic_customer_imp_ax.amend_date }}</span>
+              </td>
+              <td style="text-align: center;">
+                <span id="amend_by{{forloop.counter}}">{{ tbl_mpic_customer_imp_ax.amend_by }}</span>
+              </td>
+              <td style="text-align: center;">
+                <i class="fas fa-edit" style="cursor: pointer;"
+                  onclick="copy_data_to_edit_customer_modal_by_row_number('{{forloop.counter}}', 'EDIT'); $('#mpic_customer_imp_cms_edit_modal').modal('show');"></i>
+              </td>
+              <td>
+                <i class="fas fa-minus-circle" style="cursor: pointer; color: red;"
+                  onclick="plug_element_onclick('#delete{{forloop.counter}}');"></i>
+                <span id="tbl_id_container{{forloop.counter}}" hidden>{{tbl_mpic_customer_imp_ax.tbl_id}}</span>
+                <button type="button" id="delete{{forloop.counter}}"
+                  onclick="delete_mpic_customer_item('#tbl_id_container{{forloop.counter}}'); $(this).parent().parent().remove();"
+                  hidden></button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if tbl_mpic_customer_imp_axs.has_other_pages %}
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <div class="pagination" style="width: fit-content; margin: 0 auto;">
+        {% if tbl_mpic_customer_imp_axs.has_previous %}
+        <a href="?{% update_url_params page=1 %}">&laquo;</a>
+        {% endif %}
+        {% for i in tbl_mpic_customer_imp_axs.paginator.page_range %}
+        {% if i >= tbl_mpic_customer_imp_axs.number|add:'-5' and i <= tbl_mpic_customer_imp_axs.number|add:'5' %}
+        {% if tbl_mpic_customer_imp_axs.number == i %}
+        <a class="active" href="?{% update_url_params page=i %}">{{ i }}</a>
+        {% else %}
+        <a href="?{% update_url_params page=i %}">{{ i }}</a>
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+        {% if tbl_mpic_customer_imp_axs.has_next %}
+        <a href="?{% update_url_params page=tbl_mpic_customer_imp_axs.paginator.num_pages %}">&raquo;</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+
+<script>
+  var current_loop_number = 0;
+  function copy_data_to_edit_customer_modal_by_row_number(loop_number, head_word) {
+    prepare_edit_customer_modal_can_edit();
+
+    $("#mpic_customer_imp_cms_edit_modal_head").text(head_word);
+    current_loop_number = loop_number;
+    $("#custcode").val($("#custcode" + loop_number).text());
+    $("#custname").val($("#custname" + loop_number).text());
+    $("#custaddress").val($("#custaddress" + loop_number).text());
+    $("#custgroup").val($("#custgroup" + loop_number).text());
+    $("#postprofile").val($("#postprofile" + loop_number).text());
+    $("#site").val($("#site" + loop_number).text());
+    $("#warehouse").val($("#warehouse" + loop_number).text());
+    $("#buax").val($("#buax" + loop_number).text());
+    $("#divax").val($("#divax" + loop_number).text());
+    $("#locax").val($("#locax" + loop_number).text());
+    $("#intercocd").val($("#intercocd" + loop_number).text());
+    $("#custmapping").val($("#custmapping" + loop_number).text());
+    $("#amend_date").val($("#amend_date" + loop_number).text());
+  }
+
+  function copy_data_to_edit_customer_modal_by_row_number_readonly(loop_number, head_word) {
+    prepare_edit_customer_modal_only_readable();
+
+    $("#mpic_customer_imp_cms_edit_modal_head").text(head_word);
+    current_loop_number = loop_number;
+    $("#custcode").val($("#custcode" + loop_number).text());
+    $("#custname").val($("#custname" + loop_number).text());
+    $("#custaddress").val($("#custaddress" + loop_number).text());
+    $("#custgroup").val($("#custgroup" + loop_number).text());
+    $("#postprofile").val($("#postprofile" + loop_number).text());
+    $("#site").val($("#site" + loop_number).text());
+    $("#warehouse").val($("#warehouse" + loop_number).text());
+    $("#buax").val($("#buax" + loop_number).text());
+    $("#divax").val($("#divax" + loop_number).text());
+    $("#locax").val($("#locax" + loop_number).text());
+    $("#intercocd").val($("#intercocd" + loop_number).text());
+    $("#custmapping").val($("#custmapping" + loop_number).text());
+    $("#amend_date").val($("#amend_date" + loop_number).text());
+    $("#amend_by").val($("#amend_by" + loop_number).text());
+  }
+
+  function add_new_empty_row_to_customer_table_without_start_modal(uuid){
+    text = '\
+    <tr>\
+      <td style="text-align: center; color: yellowgreen;">\
+        new record\
+      </td>\
+      <td style="text-align: center;"><span id="custcode{0}"></span></td>\
+      <td style="text-align: center;"><span id="custname{0}"></span></td>\
+      <td><span id="custaddress{0}"></span></td>\
+      <td style="text-align: center;"><span id="custgroup{0}"></span></td>\
+      <td style="text-align: center;"><span id="postprofile{0}"></span></td>\
+      <td style="text-align: center;"><span id="site{0}"></span></td>\
+      <td style="text-align: center;"><span id="warehouse{0}"></span></td>\
+      <td style="text-align: center;"><span id="buax{0}"></span></td>\
+      <td style="text-align: center;"><span id="divax{0}"></span></td>\
+      <td style="text-align: center;"><span id="locax{0}"></span></td>\
+      <td style="text-align: center;"><span id="intercocd{0}"></span></td>\
+      <td style="text-align: center;"><span id="custmapping{0}"></span></td>\
+      <td style="text-align: center;"><span id="amend_date{0}"></span></td>\
+      <td style="text-align: center;"><span id="amend_by{0}"></span></td>\
+      <td style="text-align: center;">\
+        <i class="fas fa-edit" style="cursor: pointer;" onclick="{1} {2}"></i>\
+      </td>\
+      <td>\
+        <i class="fas fa-minus-circle" style="cursor: pointer; color: red;" onclick="{5}"></i>\
+        <span id="tbl_id_container{0}" hidden>{0}</span>\
+        <button type="button" id="delete{0}" onclick="{6} $(this).parent().parent().remove();" hidden></button>\
+      </td>\
+    </tr>\
+    '.f(
+      uuid,
+      "copy_data_to_edit_customer_modal_by_row_number('{0}', 'CREATE NEW');",
+      "$('#mpic_customer_imp_cms_edit_modal').modal('show');",
+      "copy_data_to_edit_customer_modal_by_row_number_readonly('{0}', 'DETAILS');",
+      "$('#mpic_customer_imp_cms_edit_modal').modal('show');",
+      "plug_element_onclick('#delete{0}');",
+      "delete_mpic_customer_item('#tbl_id_container{0}');"
+    );
+
+    $("#mpic_customer_imp_cms_table").prepend(text);
+  }
+
+  function add_new_empty_row_to_customer_table(uuid) {
+    add_new_empty_row_to_customer_table_without_start_modal(uuid);
+    copy_data_to_edit_customer_modal_by_row_number(uuid, 'CREATE NEW');
+    $('#mpic_customer_imp_cms_edit_modal').modal('show');
+  }
+
+  function set_tbl_id_using_current_loop_number(tbl_id) {
+    $("#tbl_id_container" + current_loop_number).text(tbl_id);
+  }
+
+  function delete_mpic_customer_item(tbl_id_container_element_id) {
+    loading_screen(true);
+    $.ajax({
+      type: 'POST',
+      url: '{% url "mpic_customer_imp_cms_delete" %}',
+      dataType: 'json',
+      data: {
+        'tbl_id': $(tbl_id_container_element_id).text(),
+        'csrfmiddlewaretoken': "{{ csrf_token }}"
+      },
+      success: function (response) {
+        if (response.msg != 'success') {
+          set_alert_status_msg(response.msg);
+          $("#alert_modal").modal('show');
+        }
+        loading_screen(false);
+      },
+      error: function () {
+        $("body").html("<h1>Oops! Something went wrong. Please try again later.</h1>");
+        loading_screen(false);
+      }
+    });
+  }
+
+</script>
+
+{% include 'cms/mpic_customer_imp_cms_edit_modal.html' %}
+{% include 'cms/mpic_customer_imp_cms_import_excel_modal.html' %}
+{% endblock content %}

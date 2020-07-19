@@ -1,0 +1,73 @@
+<div class="modal fade" id="import_modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Import Form File</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <a href="{% url 'download_example_import_movie_file' %}" style="font-size: 10px;">Click here for download example file</a><br><br>
+        <form id="import_excel_form">
+          {% csrf_token %}
+          <input id="import_file_input" name="import_file" type="file" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"><b>Close</b></button>
+        <button type="button" class="btn btn-primary" onclick="$('#import_excel_form').submit();"><b>Upload</b></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $("#import_excel_form").on('submit', function(e){
+    e.preventDefault();
+    loading_screen(true);
+    
+    var form_data = new FormData(this);
+    $.ajax({
+      type: 'POST',
+      url: "{% url 'import_mpic_movie_imp_cms' %}",
+      data: form_data,
+      cache: false,
+      contentType: false,
+      processData: false,
+      success: function(response){
+        if(response.msg == 'success'){
+          let uuid = "";
+          for(let i=0; i<response.new_tbl_mpic_movie_imp_ax_dicts.length; i++){
+            uuid = createUUID();
+            add_new_empty_row_to_movie_table_without_start_modal(uuid);
+            $("#mvcode"+uuid).text(response.new_tbl_mpic_movie_imp_ax_dicts[i].mvcode).change();
+            $("#mvtitle"+uuid).text(response.new_tbl_mpic_movie_imp_ax_dicts[i].mvtitle).change();
+            $("#mvname"+uuid).text(response.new_tbl_mpic_movie_imp_ax_dicts[i].mvname).change();
+            $("#unit_price"+uuid).text(response.new_tbl_mpic_movie_imp_ax_dicts[i].unit_price).change();
+            $("#perc_disc"+uuid).text(response.new_tbl_mpic_movie_imp_ax_dicts[i].perc_disc).change();
+            $("#mvmapping"+uuid).text(response.new_tbl_mpic_movie_imp_ax_dicts[i].mvmapping).change();
+            $("#releasedate"+uuid).text(response.new_tbl_mpic_movie_imp_ax_dicts[i].releasedate).change();
+            $("#finishdate"+uuid).text(response.new_tbl_mpic_movie_imp_ax_dicts[i].finishdate).change();
+            $("#amend_date"+uuid).text(response.new_tbl_mpic_movie_imp_ax_dicts[i].amend_date).change();
+            $("#amend_by"+uuid).text(response.new_tbl_mpic_movie_imp_ax_dicts[i].amend_by).change();
+
+            $("#tbl_id_container"+uuid).text(response.new_tbl_mpic_movie_imp_ax_dicts[i].tbl_id);
+          }
+        }
+        else{
+          set_alert_status_msg(response.msg);
+          $("#alert_modal").modal('show');
+        }
+        loading_screen(false);
+      },
+      error: function(){
+        $("body").html("<h1>Oops! Something went wrong. Please try again later.</h1>");
+        loading_screen(false);
+      }
+    });
+    $("#import_modal").modal('hide');
+    $("#import_file_input").val('');
+  });
+</script>

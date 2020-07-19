@@ -1,0 +1,69 @@
+<style>
+  .sidebar {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #313131;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+.sidebar ol {
+  list-style-type: none;
+}
+
+.sidebar a {
+  padding: 8px 8px 8px 30px;
+  text-decoration: none;
+  color: white;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidebar a:hover {
+  font-weight: bold;
+}
+</style>
+
+<div id="menu" class="sidebar">
+  <ol>
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li>
+      <a href="#">CMS</a>
+      <ol>
+        <li><a href="{% url 'movie_cms' %}">Movies</a></li>
+        <li><a href="{% url 'customer_cms' %}">Customer</a></li>
+      </ol>
+    </li>
+    <li>
+      <a href="#">Reports</a>
+      <ol>
+        {% for report_menu in report_menus %}
+        <li><a href="{% url 'report_render' report_code=report_menu.code %}">{{report_menu.code}} {{report_menu.display_name}}</a></li>
+        {% endfor %}
+      </ol>
+    </li>
+    <li><a href="{% url 'logout' %}">Logout</a></li>
+  </ol>
+</div>
+
+<script>
+  function sidebar_controller(element){
+    if($('#menu').width() == 0){
+      $('#menu').width(270);
+      $('#navbar_btn').css('margin-left', 270 + 'px');
+      $('#main').css('margin-left', 280 + 'px');
+      $(element).removeClass('fa-chevron-right').addClass('fa-chevron-left');
+    }
+    else{
+      $('#menu').width(0);
+      $('#navbar_btn').css('margin-left', '0px');
+      $('#main').css('margin-left', '10px');
+      $(element).removeClass('fa-chevron-left').addClass('fa-chevron-right');
+    }
+  }
+</script>
